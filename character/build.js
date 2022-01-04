@@ -1,6 +1,6 @@
 import { 
     checkAuth, 
-    getCharacter,
+    fetchCharacter,
     logout, 
     createCharacter,
     updateBottom,
@@ -61,7 +61,7 @@ catchphraseButton.addEventListener('click', async() => {
     // catchphraseInput.value = '';
     // console.log(catchphrase);
     // go fetch the old catch phrases
-    const character = await getCharacter();
+    const character = await fetchCharacter();
     // console.log(character.catchphrases);
     // update the catchphrases array locally by pushing the new catchphrase into the old array
     for (let c of character.catchphrases){
@@ -75,7 +75,7 @@ catchphraseButton.addEventListener('click', async() => {
 
 window.addEventListener('load', async() => {
     // on load, attempt to fetch this user's character
-    const character = await getCharacter();
+    const character = await fetchCharacter();
     // if this user turns out not to have a character
     // create a new character with correct defaults for all properties (head, middle, bottom, catchphrases)
     // and put the character's catchphrases in state (we'll need to hold onto them for an interesting reason);
@@ -106,19 +106,19 @@ function displayStats() {
 
 async function fetchAndDisplayCharacter() {
     // fetch the caracter from supabase
-    const fetchCharacter = await getCharacter();
+    const fetchChar = await fetchCharacter();
     // if the character has a head, display the head in the dom
-    headEl.style.backgroundImage = `url(../assets/${fetchCharacter.head}-head.png)`;
+    headEl.style.backgroundImage = `url(../assets/${fetchChar.head}-head.png)`;
     
     // if the character has a middle, display the middle in the dom
-    middleEl.style.backgroundImage = `url(../assets/${fetchCharacter.middle}-middle.png)`;
+    middleEl.style.backgroundImage = `url(../assets/${fetchChar.middle}-middle.png)`;
     
     // if the character has a pants, display the pants in the dom
-    bottomEl.style.backgroundImage = `url(../assets/${fetchCharacter.bottom}-pants.png)`;
+    bottomEl.style.backgroundImage = `url(../assets/${fetchChar.bottom}-pants.png)`;
     
     // loop through catchphrases and display them to the dom (clearing out old dom if necessary)
     catchphrasesEl.textContent = ``;
-    for (let c of fetchCharacter.catchphrases){
+    for (let c of fetchChar.catchphrases){
         const catchphrase = document.createElement(`p`);
         catchphrase.textContent = c;
         catchphrasesEl.append(catchphrase);

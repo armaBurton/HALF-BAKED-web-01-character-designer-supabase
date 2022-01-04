@@ -22,14 +22,14 @@ export async function createCharacter(character){
     return checkError(response);
 }
 
-export async function updateHead(value){
+export async function updateHead(newHead){
     const currentUserId = client.auth.user().id;
 
     // in supabase, update the head property
     // for the character whose user_id match's the currently logged in user's id
     const response = await client
         .from(`characters`)
-        .update({ head: value })
+        .update({ head: newHead })
         .match({ user_id: currentUserId })
         .single();
     
@@ -38,14 +38,14 @@ export async function updateHead(value){
 }
 
 
-export async function updateMiddle(value){
+export async function updateMiddle(newMiddle){
     const currentUserId = client.auth.user().id;
 
     // in supabase, update the middle property
     // for the character whose user_id match's the currently logged in user's id
     const response = await client
         .from(`characters`)
-        .update({ middle: value })
+        .update({ middle: newMiddle })
         .match({ user_id: currentUserId })
         .single();
 
@@ -53,21 +53,21 @@ export async function updateMiddle(value){
 }
 
 
-export async function updateBottom(value){
+export async function updateBottom(newBottom){
     const currentUserId = client.auth.user().id;
 
     // in supabase, update the bottom property
     // for the character whose user_id match's the currently logged in user's id
     const response = await client
         .from(`characters`)
-        .update({ bottom: value })
+        .update({ bottom: newBottom })
         .match({ user_id: currentUserId })
         .single();
 
     return checkError(response);    
 }
 
-export async function updateCatchphrases(value){
+export async function updateCatchphrases(newCatchphrases){
     const currentUserId = client.auth.user().id;
 
     // in supabase, update the catchphrases property
@@ -75,7 +75,7 @@ export async function updateCatchphrases(value){
 
     const response = await client
         .from(`characters`)
-        .update({ catchphrases: value })
+        .update({ catchphrases: newCatchphrases })
         .match({ user_id: currentUserId })
         .single();
 
@@ -99,7 +99,7 @@ export async function updateCharacter(part, value){
 */
 
 
-export async function getCharacter() {
+export async function fetchCharacter() {
     const response = await client
         .from('characters')
         .select()
@@ -122,7 +122,7 @@ export async function checkAuth() {
 
 export async function redirectToBuild() {
     if (await getUser()) {
-        location.replace('./build');
+        location.replace('./character');
     }
 }
 
