@@ -3,10 +3,11 @@ import {
     fetchCharacter,
     logout, 
     createCharacter,
-    updateBottom,
-    updateHead,
-    updateMiddle,
-    updateCatchphrases
+    // updateBottom,
+    // updateHead,
+    // updateMiddle,
+    // updateCatchphrases,
+    updateCharacter
 } from '../fetch-utils.js';
 
 checkAuth();
@@ -27,12 +28,13 @@ const logoutButton = document.getElementById('logout');
 let headCount = 0;
 let middleCount = 0;
 let bottomCount = 0;
+let charId = 0;
 
 headDropdown.addEventListener('change', async() => {
     // increment the correct count in state
     headCount++;
     // update the head in supabase with the correct data
-    await updateHead(headDropdown.value);
+    await updateCharacter(`head`, headDropdown.value, charId);
     await refreshData();
 });
 
@@ -40,8 +42,9 @@ headDropdown.addEventListener('change', async() => {
 middleDropdown.addEventListener('change', async() => {
     // increment the correct count in state
     middleCount++;
+    console.log(middleDropdown.value);
     // update the middle in supabase with the correct data
-    await updateMiddle(middleDropdown.value);
+    await updateCharacter(`middle`, middleDropdown.value, charId);
     await refreshData();
 });
 
@@ -50,7 +53,7 @@ bottomDropdown.addEventListener('change', async() => {
     // increment the correct count in state
     bottomCount++;
     // update the bottom in supabase with the correct data
-    await updateBottom(bottomDropdown.value);
+    await updateCharacter(`bottom`, bottomDropdown.value, charId);
     await refreshData();
 });
 
@@ -58,24 +61,23 @@ bottomDropdown.addEventListener('change', async() => {
 catchphraseButton.addEventListener('click', async() => {
     const catchphrase = [];
     catchphrase.push(catchphraseInput.value);
-    // catchphraseInput.value = '';
-    // console.log(catchphrase);
     // go fetch the old catch phrases
     const character = await fetchCharacter();
-    // console.log(character.catchphrases);
     // update the catchphrases array locally by pushing the new catchphrase into the old array
     for (let c of character.catchphrases){
         catchphrase.push(c);
     }
-    // console.log(catchphrase);
     // update the catchphrases in supabase by passing the mutated array to the updateCatchphrases function
-    await updateCatchphrases(catchphrase);
+    await updateCharacter(`catchphrases`, catchphrase, charId);
     refreshData();
+    catchphraseInput.value = '';
 });
 
 window.addEventListener('load', async() => {
+    charId = 0;
     // on load, attempt to fetch this user's character
     const character = await fetchCharacter();
+    charId = character.id;
     // if this user turns out not to have a character
     // create a new character with correct defaults for all properties (head, middle, bottom, catchphrases)
     // and put the character's catchphrases in state (we'll need to hold onto them for an interesting reason);
@@ -109,12 +111,53 @@ async function fetchAndDisplayCharacter() {
     const fetchChar = await fetchCharacter();
     // if the character has a head, display the head in the dom
     headEl.style.backgroundImage = `url(../assets/${fetchChar.head}-head.png)`;
-    
+    switch (fetchChar.head) {
+        case `bird`:
+            changeChar(`head`, 0);
+            break;
+        case `duck`:
+            changeChar(`head`, 1);
+            break;
+        case `dog`:
+            changeChar(`head`, 2);
+            break;
+        case `horse`:
+            changeChar(`head`, 3);
+            break;
+        }
+                    
     // if the character has a middle, display the middle in the dom
     middleEl.style.backgroundImage = `url(../assets/${fetchChar.middle}-middle.png)`;
+    switch (fetchChar.middle) {
+        case `blue`:
+            changeChar(`middle`, 0);
+            break;
+        case `dress`:
+            changeChar(`middle`, 1);
+            break;
+        case `pink`:
+            changeChar(`middle`, 2);
+            break;
+        case `red`:
+            changeChar(`middle`, 3);
+            break;
+    }
     
     // if the character has a pants, display the pants in the dom
     bottomEl.style.backgroundImage = `url(../assets/${fetchChar.bottom}-pants.png)`;
+    console.log(fetchChar.id);
+
+    switch (fetchChar.bottom) {
+        case `leg`:
+            changeChar(`bottom`, 0);
+            break;
+        case `white`:
+            changeChar(`bottom`, 1);
+            break;
+        case `blue`:
+            changeChar(`bottom`, 2);
+            break;
+    }
     
     // loop through catchphrases and display them to the dom (clearing out old dom if necessary)
     catchphrasesEl.textContent = ``;
@@ -122,8 +165,12 @@ async function fetchAndDisplayCharacter() {
         const catchphrase = document.createElement(`p`);
         catchphrase.textContent = c;
         catchphrasesEl.append(catchphrase);
-        // console.log(c);
     }
+}
+
+function changeChar(index, val){
+    document.getElementById(
+        `${index}-dropdown`).selectedIndex = val;
 }
 
 async function refreshData() {

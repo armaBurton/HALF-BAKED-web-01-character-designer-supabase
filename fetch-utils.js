@@ -22,6 +22,7 @@ export async function createCharacter(character){
     return checkError(response);
 }
 
+/* refactored Code
 export async function updateHead(newHead){
     const currentUserId = client.auth.user().id;
 
@@ -37,7 +38,6 @@ export async function updateHead(newHead){
     return checkError(response);    
 }
 
-
 export async function updateMiddle(newMiddle){
     const currentUserId = client.auth.user().id;
 
@@ -51,7 +51,6 @@ export async function updateMiddle(newMiddle){
 
     return checkError(response);    
 }
-
 
 export async function updateBottom(newBottom){
     const currentUserId = client.auth.user().id;
@@ -81,23 +80,20 @@ export async function updateCatchphrases(newCatchphrases){
 
     return checkError(response);    
 }
-
-
-/*
-CHALLENGE: how would you use this function? which functions would it replace? what's going on with the brackets in the update() arguments?
-
-export async function updateCharacter(part, value){
-    const currentUserId = client.auth.user().id;
-
-    const response = await client
-        .from('characters')
-        .update({ [part]: value })
-        .match({ user_id: currentUserId });
-
-    return checkError(response);    
-}
 */
 
+// CHALLENGE: how would you use this function? which functions would it replace? what's going on with the brackets in the update() arguments?
+
+export async function updateCharacter(index, value, charId){
+    // const currentUserId = client.auth.user().id;
+    const response = await client
+        .from(`characters`)
+        .update({ [index]: value })
+        .match({ id: [charId] })
+        .single();
+    
+    return checkError(response);    
+}
 
 export async function fetchCharacter() {
     const response = await client
